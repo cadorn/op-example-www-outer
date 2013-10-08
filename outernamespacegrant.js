@@ -58,11 +58,22 @@ var innerFrameDomain;
 var innerFrameURL;                       // inner iframe url
 var initData;
 
+
+function log() {
+    if (window.__LOGGER) {
+        return window.__LOGGER.log.apply(null, arguments);
+    } else {
+        console.log(arguments);
+    }
+}
+
+
 /** 
  * Init method.
  * onload page
- */ 
+ */
 function init() {
+    log("##### INIT #####", window.location.href);
     var url = window.location.href;
     initData = {outerURL: url};
 }
@@ -75,7 +86,7 @@ function init() {
  * @param identityLoginURL - url of the inner frame
  */
 function initInnerFrame(identityLoginURL) {
-    logMe('initInnerFrame' + identityLoginURL);
+    log('initInnerFrame' + identityLoginURL);
     innerFrameURL = identityLoginURL;
     localStorage.innerFrameURL = innerFrameURL;
     // load inner frame
@@ -94,7 +105,7 @@ function initInnerFrame(identityLoginURL) {
  * @param message
  */
 window.onmessage = function(message) {
-    logMe('window.onmessage - start' + message.data);
+    log('window.onmessage - start' + message.data);
     handleOnMessage(message);
 }
 
@@ -133,7 +144,7 @@ function handleOnMessage(message) {
  * @param bundle - notify or result
  */
 function sendBundleToJS(bundle){
-    logMe('sendBundleToJS -' + bundle);
+    log('sendBundleToJS -' + bundle);
     try {
         var dataJSON = JSON.parse(bundle);
         inner = document.getElementById(innerFrameId).contentWindow;
@@ -147,7 +158,7 @@ function sendBundleToJS(bundle){
 	      }
         inner.postMessage(bundle, locationProtocol + innerFrameDomain);
     } catch(e){
-        logMe('sendBundleToJS - error');
+        log('sendBundleToJS - error');
     }
 }
 
@@ -304,8 +315,4 @@ function responseVisibility(){
                   }
                 };
     sendBundleToJS(JSON.stringify(n));
-}
-// logger
-function logMe(msg){
-    console.log(msg);
 }

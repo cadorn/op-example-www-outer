@@ -30,12 +30,18 @@ either expressed or implied, of the FreeBSD Project.
  -->
 <html>
 <head>
+<script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="//logger.hookflash.me/tools/logger/logger.js"></script>
 <script type="text/javascript" src="outer.js"></script>
+<script type="text/javascript">
+    window.__LOGGER.setUrl("//logger.hookflash.me/tools/logger/record");
+    window.__LOGGER.setChannel("outer-js-all");
+</script>
 </head>
 <body onload="init();">
 <div id="innerFrame"></div>
 
-<!-- TODO remove buttons -->
+<!--
 <div id='divlog' rows="20" cols="30"></div>
 <button onclick="testInitInnerLockbox()">new init inner frame</button>
 <button onclick="testNotifyFederated()">federated login</button>
@@ -43,8 +49,7 @@ either expressed or implied, of the FreeBSD Project.
 <button onclick="testNotifyFacebook()">facebook login</button>
 <button onclick="responseVisibility()">responseVisibility</button>
 <button onclick="testRolodex()">testRolodex</button>
-
-<!-- -->
+-->
 
 </body>
 </html>

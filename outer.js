@@ -58,11 +58,21 @@ var innerFrameDomain;
 var innerFrameURL;                       // inner iframe url
 
 
+function log() {
+    if (window.__LOGGER) {
+        return window.__LOGGER.log.apply(null, arguments);
+    } else {
+        console.log(arguments);
+    }
+}
+
+
 /** 
  * Init method.
  * onload page
  */ 
 function init() {
+    log("##### INIT #####", window.location.href);
     var url = window.location.href;
     //if (url.indexOf(localStorage.outerFrameURL) == 0){
     if (url.indexOf('reload=true') != -1){
@@ -70,11 +80,11 @@ function init() {
         // load inner frame with parameters
         var params = url.split("?").pop();
         initInnerFrame(localStorage.innerFrameURL + "?reload=true&" + params);
-        logMe('init - reload=true');
+        log('init - reload=true');
     } else {
         // fresh scenario
         localStorage.clear();
-        logMe('init - fresh start');
+        log('init - fresh start');
         //localStorage.outerFrameURL = window.location.href;
     }
 }
@@ -93,7 +103,7 @@ function initInnerFrame(identityLoginURL) {
 	  } else {
 		  locationProtocol = "http://";
 	  }
-    logMe('initInnerFrame ' + locationProtocol + identityLoginURL);
+    log('initInnerFrame ' + locationProtocol + identityLoginURL);
     
     //innerFrameURL = locationProtocol + identityLoginURL;
     innerFrameURL = identityLoginURL;
@@ -114,7 +124,7 @@ function initInnerFrame(identityLoginURL) {
  * @param message
  */
 window.onmessage = function(message) {
-    logMe('window.onmessage - start' + message.data);
+    log('window.onmessage - start' + message.data);
     handleOnMessage(message);
 }
 
@@ -126,6 +136,9 @@ window.onmessage = function(message) {
 function handleOnMessage(message) {
     try {
         var dataJSON = JSON.parse(message.data);
+
+        log("[handleOnMessage] dataJSON", dataJSON);
+
         if (dataJSON.notify) {
             //localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
             notifyClient(JSON.stringify(dataJSON));
@@ -155,7 +168,7 @@ function handleOnMessage(message) {
  * @param bundle - notify or result
  */
 function sendBundleToJS(bundle){
-    logMe('sendBundleToJS -' + bundle);
+    log('sendBundleToJS -' + bundle);
     try {
         var dataJSON = JSON.parse(bundle);
         if (dataJSON.notify && dataJSON.notify && dataJSON.notify.browser && dataJSON.notify.browser.outerFrameURL){
@@ -169,9 +182,11 @@ function sendBundleToJS(bundle){
 	      } else {
 		      locationProtocol = "http://";
 	      }
+        log("[sendBundleToJS] bundle", bundle);
+        log("[sendBundleToJS] domain", locationProtocol + innerFrameDomain);
         inner.postMessage(bundle, locationProtocol + innerFrameDomain);
     } catch(e){
-        logMe('sendBundleToJS - error');
+        log('sendBundleToJS - error');
     }
 }
 
@@ -181,6 +196,7 @@ function sendBundleToJS(bundle){
  * @param message
  */
 function notifyClient(message) {
+    log("[notifyClient] message", message);
     var iframe = document.createElement("IFRAME");
     var locationProtocol;
 	  if (location.protocol === 'https:'){
@@ -188,11 +204,12 @@ function notifyClient(message) {
 	  } else {
 		  locationProtocol = "http:";
 	  }
-    iframe.setAttribute("src", locationProtocol + "//datapass.hookflash.me/?method=notifyClient;data=" + message);
+    var url = locationProtocol + "//datapass.hookflash.me/?method=notifyClient;data=" + message;
+    log("[notifyClient] url", url);
+    iframe.setAttribute("src", url);
     document.documentElement.appendChild(iframe);
     iframe.parentNode.removeChild(iframe);
     iframe = null;
-    console.log(locationProtocol + "//datapass.hookflash.me/?method=notifyClient  data=" + message);
 }
 
 // TODO - remove this
@@ -345,11 +362,4 @@ function responseVisibility(){
                   }
                 };
     sendBundleToJS(JSON.stringify(n));
-}
-// logger
-function logMe(msg){
-    //alert(msg);
-    console.log(msg);
-    var divlog = document.getElementById('divlog');
-    divlog.innerHTML += (msg + "\n");
 }
