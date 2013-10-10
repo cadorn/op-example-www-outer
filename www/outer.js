@@ -232,7 +232,7 @@ $(document).ready(function() {
 
         button = $('<button>1) Load Inner Frame</button>');
         button.click(function() {
-            window.initInnerFrame("http://idprovider-javascript.hookflash.me/login.html");
+            window.initInnerFrame("http://idprovider-javascript.hookflash.me/login.html?dev=true");
         });
         $("BODY").append(button);
 
