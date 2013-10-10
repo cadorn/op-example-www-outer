@@ -48,6 +48,14 @@ either expressed or implied, of the FreeBSD Project.
  *      notifyClient                        - sends message to client application
  */
 
+((function() {
+
+
+function setLastMessage(message) {
+  $("#lastMessageViewer").prepend(message + "\n");
+}
+
+
 // CONSTANTS
 var innerFrameId = "innerFrameId";       // inner iframe id
 var innerFrameParentId = "innerFrame";   // inner iframe id
@@ -72,7 +80,7 @@ function log() {
  * Init method.
  * onload page
  */
-function init() {
+window.init = function init() {
     log("##### INIT #####", window.location.href);
     var url = window.location.href;
     initData = {outerURL: url};
@@ -85,7 +93,7 @@ function init() {
  *
  * @param identityLoginURL - url of the inner frame
  */
-function initInnerFrame(identityLoginURL) {
+window.initInnerFrame = function initInnerFrame(identityLoginURL) {
     log('initInnerFrame' + identityLoginURL);
     innerFrameURL = identityLoginURL;
     localStorage.innerFrameURL = innerFrameURL;
@@ -95,8 +103,6 @@ function initInnerFrame(identityLoginURL) {
     innerFrame.id = innerFrameId;
     var parentDiv = document.getElementById(innerFrameParentId);
     parentDiv.appendChild(innerFrame);
-    innerFrame.style.width = "100%";
-    innerFrame.style.height = "100%";
 }
 
 /**
@@ -117,6 +123,10 @@ window.onmessage = function(message) {
 function handleOnMessage(message) {
     try {
         var dataJSON = JSON.parse(message.data);
+
+        log("[handleOnMessage] dataJSON", dataJSON);
+        setLastMessage("onmessage - " + JSON.stringify(dataJSON, null, 4));
+
         if (dataJSON.notify) {
             //localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
             notifyClient(JSON.stringify(dataJSON));
@@ -143,7 +153,7 @@ function handleOnMessage(message) {
  *
  * @param bundle - notify or result
  */
-function sendBundleToJS(bundle){
+window.sendBundleToJS = function sendBundleToJS(bundle){
     log('sendBundleToJS -' + bundle);
     try {
         var dataJSON = JSON.parse(bundle);
@@ -156,6 +166,7 @@ function sendBundleToJS(bundle){
 	      } else {
 		      locationProtocol = "http:";
 	      }
+        setLastMessage("to inner - " + JSON.stringify(JSON.parse(bundle), null, 4));
         inner.postMessage(bundle, locationProtocol + innerFrameDomain);
     } catch(e){
         log('sendBundleToJS - error');
@@ -175,6 +186,7 @@ function notifyClient(message) {
 	  } else {
 		  locationProtocol = "http:";
 	  }
+    setLastMessage("to cpp - " + JSON.stringify(JSON.parse(message), null, 4));
     iframe.setAttribute("src", locationProtocol + "//datapass.hookflash.me/?method=notifyClient;data=" + message);
     document.documentElement.appendChild(iframe);
     iframe.parentNode.removeChild(iframe);
@@ -182,6 +194,7 @@ function notifyClient(message) {
     console.log(locationProtocol + "//datapass.hookflash.me/?method=notifyClient  data=" + message);
 }
 
+/*
 // TODO - remove this function
 function testInitInnerFrame() {
     //initInnerFrame("http://localhost:8080/hfservice/hostedidentityinnerframe");
@@ -303,16 +316,6 @@ function testGrantStartBoki(){
     };
     sendBundleToJS(JSON.stringify(boki));
 }
-function responseVisibility(){
-        var n = {
-                  "result": {
-                    "$domain": "idprovider-javascript.hookflash.me",
-                    "$appID": "com.hookflash.OpenPeerSampleApp",
-                    "$handler": "identity",
-                    "$id": "FAKE",
-                    "$method": "identity-access-window",
-                    "$timestamp": 1371130801
-                  }
-                };
-    sendBundleToJS(JSON.stringify(n));
-}
+*/
+
+})());

@@ -48,6 +48,14 @@ either expressed or implied, of the FreeBSD Project.
  *      notifyClient                        - sends message to client application
  */
 
+((function() {
+
+
+function setLastMessage(message) {
+  $("#lastMessageViewer").prepend(message + "\n");
+}
+
+
 // CONSTANTS
 var innerFrameId = "innerFrameId";       // inner iframe id
 var innerFrameParentId = "innerFrame";   // inner iframe id
@@ -71,7 +79,7 @@ function log() {
  * Init method.
  * onload page
  */ 
-function init() {
+window.init = function init() {
     log("##### INIT #####", window.location.href);
     var url = window.location.href;
     //if (url.indexOf(localStorage.outerFrameURL) == 0){
@@ -96,7 +104,7 @@ function init() {
  *
  * @param identityLoginURL - url of the inner frame
  */
-function initInnerFrame(identityLoginURL) {
+window.initInnerFrame = function initInnerFrame(identityLoginURL) {
     var  locationProtocol;
 	  if (location.protocol === 'https:'){
 		  locationProtocol = "https://";
@@ -114,8 +122,6 @@ function initInnerFrame(identityLoginURL) {
     innerFrame.id = innerFrameId;
     var parentDiv = document.getElementById(innerFrameParentId);
     parentDiv.appendChild(innerFrame);
-    innerFrame.style.width = "100%";
-    innerFrame.style.height = "100%";
 }
 
 /**
@@ -138,6 +144,7 @@ function handleOnMessage(message) {
         var dataJSON = JSON.parse(message.data);
 
         log("[handleOnMessage] dataJSON", dataJSON);
+        setLastMessage("onmessage - " + JSON.stringify(dataJSON, null, 4));
 
         if (dataJSON.notify) {
             //localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
@@ -154,6 +161,7 @@ function handleOnMessage(message) {
             notifyClient(JSON.stringify(dataJSON));
         }
     } catch (e) {
+        log("ERROR", e.message, e.stack);
         // handle exception
         var errorMessage = {
             "error" : "error parsing json"
@@ -167,7 +175,7 @@ function handleOnMessage(message) {
  *
  * @param bundle - notify or result
  */
-function sendBundleToJS(bundle){
+window.sendBundleToJS = function sendBundleToJS(bundle){
     log('sendBundleToJS -' + bundle);
     try {
         var dataJSON = JSON.parse(bundle);
@@ -184,6 +192,7 @@ function sendBundleToJS(bundle){
 	      }
         log("[sendBundleToJS] bundle", bundle);
         log("[sendBundleToJS] domain", locationProtocol + innerFrameDomain);
+        setLastMessage("to inner - " + JSON.stringify(JSON.parse(bundle), null, 4));
         inner.postMessage(bundle, locationProtocol + innerFrameDomain);
     } catch(e){
         log('sendBundleToJS - error');
@@ -197,6 +206,7 @@ function sendBundleToJS(bundle){
  */
 function notifyClient(message) {
     log("[notifyClient] message", message);
+    setLastMessage("to cpp - " + JSON.stringify(JSON.parse(message), null, 4));
     var iframe = document.createElement("IFRAME");
     var locationProtocol;
 	  if (location.protocol === 'https:'){
@@ -212,6 +222,8 @@ function notifyClient(message) {
     iframe = null;
 }
 
+
+/*
 // TODO - remove this
 function testRolodex(){
     var req = {
@@ -271,7 +283,6 @@ function testNotifyFederated() {
     sendBundleToJS(JSON.stringify(n));
 }
 
-testNotifyFederatedRelogin
 // TODO - remove this after test
 function testNotifyFederatedRelogin() {
     var n = {
@@ -350,16 +361,5 @@ function testIdentityAccessLockboxUpdate(){
      };
     sendBundleToJS(JSON.stringify(n));
 }
-function responseVisibility(){
-        var n = {
-                  "result": {
-                    "$domain": "idprovider-javascript.hookflash.me",
-                    "$appID": "com.hookflash.OpenPeerSampleApp",
-                    "$handler": "identity",
-                    "$id": "FAKE",
-                    "$method": "identity-access-window",
-                    "$timestamp": 1371130801
-                  }
-                };
-    sendBundleToJS(JSON.stringify(n));
-}
+*/
+})());
