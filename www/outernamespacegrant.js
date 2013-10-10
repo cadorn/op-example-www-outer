@@ -194,6 +194,25 @@ function notifyClient(message) {
     console.log(locationProtocol + "//datapass.hookflash.me/?method=notifyClient  data=" + message);
 }
 
+
+
+$(document).ready(function() {
+
+    if (window.location.search === "?dev=true") {
+        var button = null;
+        $("BODY").append('<hr>');
+
+        button = $('<button>1) Load Inner Frame</button>');
+        button.click(function() {
+            window.initInnerFrame("https://hcs-javascript.hookflash.me/hfservice/namespacegrantinnerframe");
+        });
+        $("BODY").append(button);
+    }
+
+});
+
+
+
 /*
 // TODO - remove this function
 function testInitInnerFrame() {

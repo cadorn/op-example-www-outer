@@ -223,6 +223,111 @@ function notifyClient(message) {
 }
 
 
+
+$(document).ready(function() {
+
+    if (window.location.search === "?dev=true") {
+        var button = null;
+        $("BODY").append('<hr>');
+
+        button = $('<button>1) Load Inner Frame</button>');
+        button.click(function() {
+            window.initInnerFrame("http://idprovider-javascript.hookflash.me/login.html");
+        });
+        $("BODY").append(button);
+
+        button = $('<button>2) Federated login</button>');
+        button.click(function() {
+            window.sendBundleToJS(JSON.stringify({
+                "notify": {
+                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$appID": "com.hookflash.OpenPeerSampleApp",
+                    "$handler": "identity",
+                    "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
+                    "$method": "identity-access-start",
+                    "agent": {
+                        "userAgent": "OpenPeerSampleApp/1.0 (iPhone OS 6.1.2;iPad) HOPID/1.0 (777)",
+                        "name": "OpenPeerSampleApp",
+                        "image": "http://hookflash.com/wp-content/themes/CleanSpace/images/logo.png",
+                        "url": "www.openpeer.org"
+                    },
+                    "identity": {
+                        "base": "identity://idprovider-javascript.hookflash.me/",
+                        "provider": "idprovider-javascript.hookflash.me"
+                    },
+                    "browser": {
+                        "visibility": "visible-on-demand",
+                        "popup": "deny",
+                        "outerFrameURL": "https://app-javascript.hookflash.me/outer.html?reload=true"
+                    }
+                }
+            }));
+        });
+        $("BODY").append(button);
+        button = $('<button>2) Federated relogin</button>');
+        button.click(function() {
+            window.sendBundleToJS(JSON.stringify({
+                "notify": {
+                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$appID": "com.hookflash.OpenPeerSampleApp",
+                    "$handler": "identity",
+                    "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
+                    "$method": "identity-access-start",
+                    "agent": {
+                        "userAgent": "OpenPeerSampleApp/1.0 (iPhone OS 6.1.2;iPad) HOPID/1.0 (777)",
+                        "name": "OpenPeerSampleApp",
+                        "image": "http://hookflash.com/wp-content/themes/CleanSpace/images/logo.png",
+                        "url": "www.openpeer.org"
+                    },
+                    "identity": {
+                        "uri": "identity://idprovider-javascript.hookflash.me/h13",
+                        "reloginKey": "U2FsdGVkX19jc5f/bpoRrplHAmJcT7kFjnm2sBT2V4zqrVoRkS0wQmWaOnppYtWDfznW18jzrn2Jl/iEeYqBYbOxyErlCyDqq25NG+VrFYP9bEEkNIuXCINj39Zz1CGvjyp6uAQe+V40Z2t2vRyPgPFKBwT1a8LLVhFZ5iOwUVhYN/TmOvDhvMmLbUbl+zeR3eOOcM4Kr+TryG7APHTHjbyU30spCKth4z8e2cexHB0=",
+                        "provider": "idprovider-javascript.hookflash.me"
+                    },
+                    "browser": {
+                        "visibility": "visible-on-demand",
+                        "popup": "deny",
+                        "outerFrameURL": "https://app-javascript.hookflash.me/outer.html?reload=true"
+                    }
+                }
+            }));
+        });
+        $("BODY").append(button);
+        button = $('<button>2) Facebook login</button>');
+        button.click(function() {
+            window.sendBundleToJS(JSON.stringify({
+                "notify": {
+                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$appID": "com.hookflash.OpenPeerSampleApp",
+                    "$handler": "identity",
+                    "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
+                    "$method": "identity-access-start",
+                    "agent": {
+                        "userAgent": "OpenPeerSampleApp/1.0 (iPhone OS 6.1.2;iPad) HOPID/1.0 (777)",
+                        "name": "OpenPeerSampleApp",
+                        "image": "http://hookflash.com/wp-content/themes/CleanSpace/images/logo.png",
+                        "url": "www.openpeer.org"
+                    },
+                    "identity": {
+                        "base" : "identity://facebook.com/",
+                        "provider": "idprovider-javascript.hookflash.me"
+                    },
+                    "browser": {
+                        "visibility": "visible-on-demand",
+                        "popup": "deny",
+                        "outerFrameURL": "http://app-javascript.hookflash.me/outer.html?reload=true"
+                    }
+                }
+            }));
+        });
+        $("BODY").append(button);
+    }
+
+});
+
+
+
+
 /*
 // TODO - remove this
 function testRolodex(){
@@ -254,34 +359,6 @@ function testInitInnerLockbox() {
     initInnerFrame("http://idprovider-javascript.hookflash.me/login.html");
 }
 
-// TODO - remove this after test
-function testNotifyFederated() {
-    var n = {
-                  "notify": {
-                      "$domain": "idprovider-javascript.hookflash.me",
-                      "$appID": "com.hookflash.OpenPeerSampleApp",
-                      "$handler": "identity",
-                      "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
-                      "$method": "identity-access-start",
-                      "agent": {
-                          "userAgent": "OpenPeerSampleApp/1.0 (iPhone OS 6.1.2;iPad) HOPID/1.0 (777)",
-                          "name": "OpenPeerSampleApp",
-                          "image": "http://hookflash.com/wp-content/themes/CleanSpace/images/logo.png",
-                          "url": "www.openpeer.org"
-                      },
-                      "identity": {
-                          "base": "identity://idprovider-javascript.hookflash.me/",
-                          "provider": "idprovider-javascript.hookflash.me"
-                      },
-                      "browser": {
-                          "visibility": "visible-on-demand",
-                          "popup": "deny",
-                          "outerFrameURL": "https://app-javascript.hookflash.me/outer.html?reload=true"
-                      }
-                  }
-              };
-    sendBundleToJS(JSON.stringify(n));
-}
 
 // TODO - remove this after test
 function testNotifyFederatedRelogin() {
