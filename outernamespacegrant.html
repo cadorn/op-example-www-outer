@@ -46,6 +46,8 @@ either expressed or implied, of the FreeBSD Project.
 		margin-right: 5%;
 		width: 90%;
 		height: 80px;
+		max-height: 80px;
+		overflow-y: hidden;
 	}
 	DIV#innerFrame > IFRAME {
 		border: 0px;
@@ -79,9 +81,9 @@ either expressed or implied, of the FreeBSD Project.
 <body onload="init();">
 <div class="label">outernamespacegrant.html</div>	
 <div id="innerFrame"></div>
-<pre id="lastMessageViewer"></pre>
 
 <!--
+<pre id="lastMessageViewer"></pre>
 <button onclick="testInitInnerFrame()">Init inner frame</button>
 <button onclick="testGrantStartNotify()">testGrantStartNotify</button>
 <button onclick="testGrantStartBoki()">testGrantStartBoki</button>

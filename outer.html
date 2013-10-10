@@ -46,6 +46,8 @@ either expressed or implied, of the FreeBSD Project.
 		margin-right: 5%;
 		width: 90%;
 		height: 80px;
+		max-height: 80px;
+		overflow-y: hidden;
 	}
 	DIV#innerFrame > IFRAME {
 		border: 0px;
@@ -79,9 +81,9 @@ either expressed or implied, of the FreeBSD Project.
 <body onload="init();">
 <div class="label">outer.html</div>	
 <div id="innerFrame"></div>
-<pre id="lastMessageViewer"></pre>
 
 <!--
+<pre id="lastMessageViewer"></pre>
 <div id='divlog' rows="20" cols="30"></div>
 <button onclick="testInitInnerLockbox()">new init inner frame</button>
 <button onclick="testNotifyFederated()">federated login</button>

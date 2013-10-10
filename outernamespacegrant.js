@@ -52,7 +52,7 @@ either expressed or implied, of the FreeBSD Project.
 
 
 function setLastMessage(message) {
-  $("#lastMessageViewer").prepend(message + "\n");
+//  $("#lastMessageViewer").prepend(message + "\n");
 }
 
 
