@@ -235,6 +235,7 @@ $(document).ready(function() {
         button = $('<button>1) Load Inner Frame</button>');
         button.click(function() {
             window.initInnerFrame("http://idprovider-javascript.hookflash.me/login.html?dev=true");
+//            window.initInnerFrame("http://localhost:8001/login.php");
         });
         $("BODY").append(button);
 
