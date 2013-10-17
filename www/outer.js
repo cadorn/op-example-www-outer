@@ -228,6 +228,8 @@ $(document).ready(function() {
 
     if (window.location.search === "?dev=true") {
         var button = null;
+        $("HEAD").append('<link rel="stylesheet" href="style-dev.css"/>');
+        $("BODY").prepend('<div class="label">' + window.location.pathname + '</div>');
         $("BODY").append('<hr>');
 
         button = $('<button>1) Load Inner Frame</button>');
