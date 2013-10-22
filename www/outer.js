@@ -80,7 +80,7 @@ function log() {
  * onload page
  */ 
 window.init = function init() {
-    log("##### INIT #####", window.location.href);
+    log("##### INIT 2 #####", window.location.href);
     var url = window.location.href;
     //if (url.indexOf(localStorage.outerFrameURL) == 0){
     if (url.indexOf('reload=true') != -1){
@@ -111,8 +111,20 @@ window.initInnerFrame = function initInnerFrame(identityLoginURL) {
 	  } else {
 		  locationProtocol = "http://";
 	  }
+
+    if (/skin=\w+/.test(window.location.search)) {
+        log('initInnerFrame add skin to url due to window.location.search', window.location.search);
+
+        if (/\?/.test(identityLoginURL)) {
+            identityLoginURL += "&";
+        } else {
+            identityLoginURL += "?";
+        }
+        identityLoginURL += "skin=" + window.location.search.match(/skin=(.+?)(?:&|$|\?)/)[1];
+    }
+
     log('initInnerFrame ' + locationProtocol + identityLoginURL);
-    
+
     //innerFrameURL = locationProtocol + identityLoginURL;
     innerFrameURL = identityLoginURL;
     localStorage.innerFrameURL = innerFrameURL;
@@ -226,16 +238,20 @@ function notifyClient(message) {
 
 $(document).ready(function() {
 
-    if (window.location.search === "?dev=true") {
+    if (/dev=true/.test(window.location.search)) {
         var button = null;
         $("HEAD").append('<link rel="stylesheet" href="style-dev.css"/>');
         $("BODY").prepend('<div class="label">' + window.location.pathname + '</div>');
         $("BODY").append('<hr>');
 
+        var loginHost = "idprovider-javascript.hookflash.me";
+        if (window.location.hostname === "localhost") {
+            loginHost = "localhost:8001";
+        }
+
         button = $('<button>1) Load Inner Frame</button>');
         button.click(function() {
-            window.initInnerFrame("http://idprovider-javascript.hookflash.me/login.html?dev=true");
-//            window.initInnerFrame("http://localhost:8001/login.php");
+            window.initInnerFrame("http://" + loginHost + "/login.php?" + ((/skin=\w*/.test(window.location.search))?"&skin="+window.location.search.match(/skin=(.+?)(?:&|$|\?)/)[1]:""));
         });
         $("BODY").append(button);
 
