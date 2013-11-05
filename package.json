@@ -2,7 +2,11 @@
   "name": "op-example-www-outer",
   "version": "0.1.0",
   "private": true,
+  "main": "server.js",
   "dependencies": {
     "express": "~3.4.0"
+  },
+  "scripts": {
+  	"start": "node ."
   }
 }

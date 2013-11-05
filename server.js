@@ -1,9 +1,16 @@
 
 const PATH = require("path");
+const FS = require("fs");
 const EXPRESS = require("express");
 
 
 const PORT = process.env.PORT || 8080;
+
+
+var serviceUid = false;
+if (FS.existsSync(PATH.join(__dirname, "service.json"))) {
+    serviceUid = JSON.parse(FS.readFileSync(PATH.join(__dirname, "service.json"))).uid;
+}
 
 
 exports.main = function(callback) {
@@ -12,6 +19,12 @@ exports.main = function(callback) {
         var app = EXPRESS();
 
         app.configure(function() {
+            app.use(function(req, res, next) {
+                if (serviceUid) {
+                    res.setHeader("x-service-uid", serviceUid);
+                }
+                return next();
+            });
             app.use(EXPRESS.logger());
             app.use(EXPRESS.bodyParser());
             app.use(EXPRESS.methodOverride());
