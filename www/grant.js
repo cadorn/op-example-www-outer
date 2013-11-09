@@ -204,7 +204,7 @@ $(document).ready(function() {
 
         button = $('<button>1) Load Inner Frame</button>');
         button.click(function() {
-            window.initInnerFrame("https://hcs-javascript.hookflash.me/hfservice/namespacegrantinnerframe?dev=true");
+            window.initInnerFrame("//%HFSERVICE_HOST%/hfservice/namespacegrantinnerframe?dev=true");
         });
         $("BODY").append(button);
     }

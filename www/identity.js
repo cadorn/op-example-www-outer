@@ -244,7 +244,7 @@ $(document).ready(function() {
         $("BODY").prepend('<div class="label">' + window.location.pathname + '</div>');
         $("BODY").append('<hr>');
 
-        var loginHost = "idprovider-javascript.hookflash.me";
+        var loginHost = "%IDPROVIDER_HOST%";
         if (window.location.hostname === "localhost") {
             loginHost = "localhost:8001";
         }

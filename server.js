@@ -7,9 +7,11 @@ const EXPRESS = require("express");
 const PORT = process.env.PORT || 8080;
 
 
+var config = null;
 var serviceUid = false;
 if (FS.existsSync(PATH.join(__dirname, "service.json"))) {
-    serviceUid = JSON.parse(FS.readFileSync(PATH.join(__dirname, "service.json"))).uid;
+    config = JSON.parse(FS.readFileSync(PATH.join(__dirname, "service.json")));
+    serviceUid = config.uid;
 }
 
 
@@ -45,11 +47,29 @@ exports.main = function(callback) {
         return callback(err);
     }
 
-    function mountStaticDir(app, route, path) {
+    function mountStaticDir(app, route, rootPath) {
         app.get(route, function(req, res, next) {
             var originalUrl = req.url;
             req.url = req.params[0] || "index.html";
-            EXPRESS.static(path)(req, res, function() {
+
+            if (/\.html$/.test(req.url) || /\.js$/.test(req.url)) {
+                var path = PATH.join(rootPath, req.url);
+                if (FS.existsSync(path)) {
+                    var data = FS.readFileSync(path).toString();
+                    data = data.replace(/%LOGGER_HOST%/g, (config && config.hcs.jslogger.host) || "logger.hookflash.me");
+                    data = data.replace(/%HFSERVICE_HOST%/g, (config && config.hcs.hfservice.host) || "hfservice.hookflash.me");
+                    data = data.replace(/%IDPROVIDER_HOST%/g, (config && config.hcs.identity.host) || "identity.hookflash.me");
+                    if (/\.html$/.test(req.url)) {
+                        res.setHeader("Content-Type", "text/html");
+                    } else
+                    if (/\.js$/.test(req.url)) {
+                        res.setHeader("Content-Type", "application/javascript");
+                    }
+                    return res.end(data);
+                }
+            }
+
+            EXPRESS.static(rootPath)(req, res, function() {
                 req.url = originalUrl;
                 return next.apply(null, arguments);
             });

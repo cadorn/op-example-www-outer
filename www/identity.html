@@ -32,11 +32,11 @@ either expressed or implied, of the FreeBSD Project.
 <head>
 	<link rel="stylesheet" href="style.css" />
 	<script type="text/javascript" src="jquery-1.8.3.min.js"></script>
-	<script type="text/javascript" src="//logger.hookflash.me/tools/logger/logger.js"></script>
+	<script type="text/javascript" src="//%LOGGER_HOST%/tools/logger/logger.js"></script>
 	<script type="text/javascript" src="identity.js"></script>
 	<script type="text/javascript">
 		if (window.__LOGGER) {
-		    window.__LOGGER.setUrl("//logger.hookflash.me/tools/logger/record");
+		    window.__LOGGER.setUrl("//%LOGGER_HOST%/tools/logger/record");
 		    window.__LOGGER.setChannel("identity-outer-js-all");
 		}
 	</script>
