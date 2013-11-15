@@ -83,7 +83,7 @@ window.init = function init() {
     log("##### INIT 2 #####", window.location.href);
     var url = window.location.href;
     //if (url.indexOf(localStorage.outerFrameURL) == 0){
-    if (url.indexOf('reload=true') != -1){
+    if (url.indexOf('reload=true') != -1 && localStorage.innerFrameURL){
         // after OAuth redirect
         // load inner frame with parameters
         var params = url.split("?").pop();
@@ -190,9 +190,11 @@ function handleOnMessage(message) {
 window.sendBundleToJS = function sendBundleToJS(bundle){
     log('sendBundleToJS -' + bundle);
     try {
-        var dataJSON = JSON.parse(bundle);
-        if (dataJSON.notify && dataJSON.notify && dataJSON.notify.browser && dataJSON.notify.browser.outerFrameURL){
-            localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
+        if (bundle) {
+            var dataJSON = JSON.parse(bundle);
+            if (dataJSON.notify && dataJSON.notify && dataJSON.notify.browser && dataJSON.notify.browser.outerFrameURL){
+                localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
+            }
         }
         inner = document.getElementById(innerFrameId).contentWindow;
         var innerFrameDomainData = innerFrameURL.split("/");
