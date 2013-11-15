@@ -83,7 +83,11 @@ window.init = function init() {
     log("##### INIT 2 #####", window.location.href);
     var url = window.location.href;
     //if (url.indexOf(localStorage.outerFrameURL) == 0){
-    if (url.indexOf('reload=true') != -1 && localStorage.innerFrameURL){
+    if (
+        url.indexOf('reload=true') != -1 &&
+        localStorage.innerFrameURL &&
+        !/^undefined/.test(localStorage.innerFrameURL)
+    ) {
         // after OAuth redirect
         // load inner frame with parameters
         var params = url.split("?").pop();
