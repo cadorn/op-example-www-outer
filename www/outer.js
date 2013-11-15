@@ -126,6 +126,16 @@ window.initInnerFrame = function initInnerFrame(identityLoginURL) {
         }
         identityLoginURL += "skin=" + window.location.search.match(/skin=(.+?)(?:&|$|\?)/)[1];
     }
+    if (/view=\w+/.test(window.location.search)) {
+        log('initInnerFrame add view to url due to window.location.search', window.location.search);
+
+        if (/\?/.test(identityLoginURL)) {
+            identityLoginURL += "&";
+        } else {
+            identityLoginURL += "?";
+        }
+        identityLoginURL += "view=" + window.location.search.match(/view=(.+?)(?:&|$|\?)/)[1];
+    }
 
     log('initInnerFrame ' + locationProtocol + identityLoginURL);
 
