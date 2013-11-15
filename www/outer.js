@@ -119,6 +119,9 @@ window.initInnerFrame = function initInnerFrame(identityLoginURL) {
     if (/skin=\w+/.test(window.location.search)) {
         log('initInnerFrame add skin to url due to window.location.search', window.location.search);
 
+        if (/\?$/.test(identityLoginURL)) {
+            identityLoginURL += "";
+        } else
         if (/\?/.test(identityLoginURL)) {
             identityLoginURL += "&";
         } else {
@@ -129,6 +132,9 @@ window.initInnerFrame = function initInnerFrame(identityLoginURL) {
     if (/view=\w+/.test(window.location.search)) {
         log('initInnerFrame add view to url due to window.location.search', window.location.search);
 
+        if (/\?$/.test(identityLoginURL)) {
+            identityLoginURL += "";
+        } else
         if (/\?/.test(identityLoginURL)) {
             identityLoginURL += "&";
         } else {
