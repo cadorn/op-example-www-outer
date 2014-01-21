@@ -255,11 +255,17 @@ $(document).ready(function() {
         });
         $("BODY").append(button);
 
+        // Default to config used on legacy.
+        var identityProviderDomain = "idprovider-javascript.hookflash.me";
+        if (/-i\.hcs\.io$/.test(loginHost)) {
+            identityProviderDomain = loginHost;
+        }
+
         button = $('<button>2) Federated login</button>');
         button.click(function() {
             window.sendBundleToJS(JSON.stringify({
                 "notify": {
-                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$domain": identityProviderDomain,
                     "$appID": "com.hookflash.OpenPeerSampleApp",
                     "$handler": "identity",
                     "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
@@ -271,8 +277,8 @@ $(document).ready(function() {
                         "url": "www.openpeer.org"
                     },
                     "identity": {
-                        "base": "identity://idprovider-javascript.hookflash.me/",
-                        "provider": "idprovider-javascript.hookflash.me"
+                        "base": "identity://" + identityProviderDomain + "/",
+                        "provider": identityProviderDomain
                     },
                     "browser": {
                         "visibility": "visible-on-demand",
@@ -287,7 +293,7 @@ $(document).ready(function() {
         button.click(function() {
             window.sendBundleToJS(JSON.stringify({
                 "notify": {
-                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$domain": identityProviderDomain,
                     "$appID": "com.hookflash.OpenPeerSampleApp",
                     "$handler": "identity",
                     "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
@@ -299,9 +305,9 @@ $(document).ready(function() {
                         "url": "www.openpeer.org"
                     },
                     "identity": {
-                        "uri": "identity://idprovider-javascript.hookflash.me/h13",
+                        "uri": "identity://" + identityProviderDomain + "/h13",
                         "reloginKey": "U2FsdGVkX19jc5f/bpoRrplHAmJcT7kFjnm2sBT2V4zqrVoRkS0wQmWaOnppYtWDfznW18jzrn2Jl/iEeYqBYbOxyErlCyDqq25NG+VrFYP9bEEkNIuXCINj39Zz1CGvjyp6uAQe+V40Z2t2vRyPgPFKBwT1a8LLVhFZ5iOwUVhYN/TmOvDhvMmLbUbl+zeR3eOOcM4Kr+TryG7APHTHjbyU30spCKth4z8e2cexHB0=",
-                        "provider": "idprovider-javascript.hookflash.me"
+                        "provider": identityProviderDomain
                     },
                     "browser": {
                         "visibility": "visible-on-demand",
@@ -316,7 +322,7 @@ $(document).ready(function() {
         button.click(function() {
             window.sendBundleToJS(JSON.stringify({
                 "notify": {
-                    "$domain": "idprovider-javascript.hookflash.me",
+                    "$domain": identityProviderDomain,
                     "$appID": "com.hookflash.OpenPeerSampleApp",
                     "$handler": "identity",
                     "$id": "A2njBGMmwKAjxiH23SW5myMf5CGfrbVT",
@@ -329,7 +335,7 @@ $(document).ready(function() {
                     },
                     "identity": {
                         "base" : "identity://facebook.com/",
-                        "provider": "idprovider-javascript.hookflash.me"
+                        "provider": identityProviderDomain
                     },
                     "browser": {
                         "visibility": "visible-on-demand",
