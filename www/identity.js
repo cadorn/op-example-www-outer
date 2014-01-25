@@ -368,6 +368,26 @@ $(document).ready(function() {
             }));
         });
         $("BODY").append(button);
+        button = $('<button>Test CORS for password service</button>');
+        button.click(function() {
+            $.ajax({
+                url : "http://hfservice-v1-cadorn-i.hcs.io/password1",
+                type : "post",
+                data : JSON.stringify({"request":{"$domain":"identity-v1-cadorn-i.hcs.io","$id":"393120","$handler":"identity","$method":"hosted-identity-secret-part-set","nonce":"208657a4dde3ea72718009d2ddfc564ba3b0edef","hostingProof":"06d8542289e79814f512eaf545683b8624527f21","hostingProofExpires":1390695625,"clientNonce":"3123","identity":{"accessToken":"facebook-100507572584075-1395793225-416e466dfb1be094ff367656ad7bc9e823a66180","accessSecretProof":"7cbcd3a4f603da1b4ab89d55f19eb3bdff27077a","accessSecretProofExpires":1395793225,"uri":"identity://facebook.com/100007575584075","secretSalt":"14c4a2f0df5590cfc28a72894658e85fe23bd3de","secretPart":"5f08749e7e5e2a2555f3fc1fe7a360b00fe93689"}}}),
+                dataType: "json",
+                contentType: "application/json",
+                // callback handler that will be called on success
+                success: function(response, textStatus, jqXHR) {
+                    console.log("success", response, textStatus, jqXHR);
+                },
+                // callback handler that will be called on error
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error(jqXHR, textStatus, errorThrown);
+                }
+            });
+
+        });
+        $("BODY").append(button);
     }
 
 });
