@@ -273,7 +273,7 @@ $(document).ready(function() {
 
         button = $('<button>1) Load Inner Frame</button>');
         button.click(function() {
-            window.initInnerFrame("http://" + loginHost + "/login.php?" + ((/skin=\w*/.test(window.location.search))?"&skin="+window.location.search.match(/skin=(.+?)(?:&|$|\?)/)[1]:""));
+            window.initInnerFrame("http://" + loginHost + "/login.php" + (window.location.search || ""));
         });
         $("BODY").append(button);
 
