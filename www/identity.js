@@ -142,6 +142,19 @@ window.initInnerFrame = function initInnerFrame(identityLoginURL) {
         }
         identityLoginURL += "view=" + window.location.search.match(/view=(.+?)(?:&|$|\?)/)[1];
     }
+    if (/federated=\w+/.test(window.location.search)) {
+        log('initInnerFrame add federated to url due to window.location.search', window.location.search);
+
+        if (/\?$/.test(identityLoginURL)) {
+            identityLoginURL += "";
+        } else
+        if (/\?/.test(identityLoginURL)) {
+            identityLoginURL += "&";
+        } else {
+            identityLoginURL += "?";
+        }
+        identityLoginURL += "federated=" + window.location.search.match(/federated=(.+?)(?:&|$|\?)/)[1];
+    }
 
     log('initInnerFrame ' + locationProtocol + identityLoginURL);
 
