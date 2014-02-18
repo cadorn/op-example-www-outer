@@ -229,21 +229,26 @@ window.sendBundleToJS = function sendBundleToJS(bundle){
                 localStorage.outerFrameURL = dataJSON.notify.browser.outerFrameURL;
             }
         }
-        inner = document.getElementById(innerFrameId).contentWindow;
-        var innerFrameDomainData = innerFrameURL.split("/");
-        innerFrameDomain = innerFrameDomainData[2];
-        if (location.protocol === 'https:'){
-		      locationProtocol = "https://";
-	      } else {
-		      locationProtocol = "http://";
-	      }
-        log("[sendBundleToJS] bundle", bundle);
-        log("[sendBundleToJS] domain", locationProtocol + innerFrameDomain);
-        setLastMessage("to inner - " + JSON.stringify(JSON.parse(bundle), null, 4));
-        inner.postMessage(bundle, locationProtocol + innerFrameDomain);
+
+        sendPostMessage(bundle);
     } catch(e){
         log('sendBundleToJS - error');
     }
+}
+
+function sendPostMessage(bundle) {
+    inner = document.getElementById(innerFrameId).contentWindow;
+    var innerFrameDomainData = innerFrameURL.split("/");
+    innerFrameDomain = innerFrameDomainData[2];
+    if (location.protocol === 'https:'){
+          locationProtocol = "https://";
+      } else {
+          locationProtocol = "http://";
+      }
+    log("[sendBundleToJS] bundle", bundle);
+    log("[sendBundleToJS] domain", locationProtocol + innerFrameDomain);
+    setLastMessage("to inner - " + JSON.stringify(JSON.parse(bundle), null, 4));
+    inner.postMessage(bundle, locationProtocol + innerFrameDomain);
 }
 
 /**
@@ -401,6 +406,53 @@ $(document).ready(function() {
 
         });
         $("BODY").append(button);
+    } else if(/test=true/.test(window.location.search)) {
+        //overriding notifyClient to send messages to testClient via postMessage instead
+        notifyClient = function(jsonString) {
+            var message = {
+                message: "notify-client",
+                json: jsonString
+            };
+            sendParent(message);
+        };
+
+        function sendParent(message) {
+            window.parent.postMessage(JSON.stringify(message), '*');
+        }
+
+        //proxy register method which pass the message to the innerFrame
+        window.testRegister = function(name, username, password) {
+            var payload = {_test_register: {
+                name: name, 
+                username: username,
+                password: password
+            }}
+            sendPostMessage(JSON.stringify(payload));
+        };
+
+        //proxy login method which pass the message to the innerFrame
+        window.testLogin = function(username, password) {
+            var payload = {_test_login: {
+                username: username,
+                password: password
+            }}
+            sendPostMessage(JSON.stringify(payload));
+        };
+
+        //look for messages coming from the testClient and evaluate methods bind to window
+        window.addEventListener("message", function(event) {
+            try{
+                var payload = JSON.parse(event.data);
+                if(payload.message == 'exec') {
+                    window[payload.method].apply(window, payload.args);
+                }
+            } catch(ex) {
+                //don't worry this is not for us
+            }
+        }, false);
+
+        //tell test-client to initiate its process
+        sendParent({message: 'start-communication'});
     }
 
 });
