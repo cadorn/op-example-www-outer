@@ -8,5 +8,10 @@
   },
   "scripts": {
   	"start": "node ."
+  },
+  "config": {
+    "pio.deploy.converter": {
+      "name": "nodejs-server"
+    }
   }
 }

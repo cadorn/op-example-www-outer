@@ -5,9 +5,8 @@ BODY {
 	padding: 0px;
 	margin: 0px;
 	overflow: hidden;
-    background-image: url(images/iPhone_background.png);
     background-size: cover;
-    background-color: rgb(65, 123, 134);
+    background-color: rgb(165, 123, 134);
 }
 DIV#innerFrame {
 	width: 100%;

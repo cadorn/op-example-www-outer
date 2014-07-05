@@ -1,0 +1,182 @@
+<html>
+<head>
+    <link rel="stylesheet" href="/style.css" />
+	<script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="//logger-v1-rel-lespaulinst2-i.hcs.io/tools/logger/logger.js"></script>
+    <script type="text/javascript">
+    ((function(window) {
+
+        const INNER_FRAME_PLACEHOLDER_ID = "inner-frame";
+
+
+        /**
+         * Logger
+         */
+        
+        if (window.__LOGGER) {
+		    window.__LOGGER.setUrl("//logger-v1-rel-lespaulinst2-i.hcs.io/tools/logger/record");
+		    window.__LOGGER.setChannel("identity-outer-js-all");
+        }
+        function log() {
+            if (window.__LOGGER) {
+                return window.__LOGGER.log.apply(null, arguments);
+            } else {
+                return console.log(arguments);
+            }
+        }
+
+
+        /**
+         * Util
+         */
+
+        function generateId() {
+            return (Math.floor(Math.random() * 1000000) + 1 + "");
+        }
+
+        function generateInnerFrame (url) {
+            log('generateInnerFrame(url)', url);
+            $("#" + INNER_FRAME_PLACEHOLDER_ID + " > IFRAME").remove();
+            $('<iframe src="' + url + '"></iframe>').appendTo("#" + INNER_FRAME_PLACEHOLDER_ID);
+        }
+
+        function sendMessageToInnerFrame (message) {
+            log('sendToInnerFrame(message)', message);
+            var iframe = $("#" + INNER_FRAME_PLACEHOLDER_ID + " > IFRAME");
+            if (iframe.length === 0) {
+                throw new Error("Cannot send message to inner frame. No inner frame loaded!");
+            }
+            var url = iframe.attr("src");
+            return iframe[0].contentWindow.postMessage(message, url.replace(/$(https?:\/\/[^\/]+)/, "$1"));
+        }
+
+        function getUrlFor(uri) {
+            return window.location.protocol + "//" + window.location.host + uri;
+        }
+
+        function addQueryParameters(url, parameters) {
+            var m = url.match(/^([^\?]+)(?:\?(.+))?$/);
+            if (!m) {
+                throw new Error("Error parsing url '" + url + "'");
+            }
+            console.log("m", m);
+            var qs = {};
+            if (m[2]) {
+                m[2].split("&").forEach(function (pair) {
+                    pair = pair.split("=");
+                    qs[pair[0]] = pair[1];
+                });
+            }
+            for (var name in parameters) {
+                qs[name] = parameters[name];
+            }
+            return m[1] + "?" + Object.keys(qs).map(function (name) {
+                return name + "=" + qs[name];
+            }).join("&");
+        }
+
+        function storeSession (session) {
+            var self = this;
+            log("storeSession(session)", session);
+            window.localStorage["opouter-session"] = JSON.stringify(session);
+        }
+
+        function loadSession () {
+            var self = this;
+            log("loadSession()");
+            var session = window.localStorage["opouter-session"] || null;
+            if (session) {
+                try {
+                    session = JSON.parse(session);
+                } catch (err) {
+                    log("ERROR", "Client->loadSession()", "Error '" + err.message + "' parsing session:", session);
+                    session = null;
+                }
+            }
+            log("loadSession() - session", session);
+            return session;
+        }
+
+        /**
+         * App API - These methods get called by the application hosting this web view.
+         */
+
+        window.initInnerFrame = function (identityLoginURL) {
+
+            log('window.initInnerFrame(identityLoginURL)', identityLoginURL);
+
+            storeSession({
+                identityLoginURL: identityLoginURL
+            });
+
+            generateInnerFrame(identityLoginURL);
+
+            return true;
+        }
+
+		window.sendBundleToJS = function (message) {
+            log('window.sendBundleToJS (message)', message);
+            return sendMessageToInnerFrame(message);
+		}
+
+        /**
+         * App Bridge - To send messages to the app
+         */
+		function notifyClient (message) {
+            log('notifyClient(message)', message);
+		    var iframe = document.createElement("IFRAME");
+		    var url = window.location.protocol + "//datapass.hookflash.me/?method=notifyClient;data=" + JSON.stringify(message);
+            log('notifyClient(message) - url', url);
+		    iframe.setAttribute("src", url);
+		    document.documentElement.appendChild(iframe);
+		    iframe.parentNode.removeChild(iframe);
+		    iframe = null;
+		}
+
+        /**
+         * Inner Frame API - These methods get called by the page loaded in the inner frame.
+         */
+        window.addEventListener("message", function (event) {
+            try {
+                var message = JSON.parse(event.data);
+                log('window.addEventListener("message")', message);
+                if (message.request) {
+                	return notifyClient(message);
+                } else
+                if (message.notify) {
+                	return notifyClient(message);
+                } else
+                if (message.result) {
+                	return notifyClient(message);
+                }
+            } catch (err) {
+                log("ERROR", 'window.addEventListener("message")', err.stack);
+                console.error("ERROR", 'window.addEventListener("message")', err.stack);
+            }
+        }, false);
+
+
+        /**
+         * Init
+         */
+
+        window.init = function () {
+            log('##### INIT ##### - init() - window.location', window.location.href);
+
+            if (/reload=true/.test(window.location.search)) {
+                var session = loadSession();
+                if (session) {
+                    window.initInnerFrame(session.identityLoginURL);
+                }
+                storeSession(null);
+            }
+        }
+
+
+    })(window));
+    </script>
+</head>
+<body onload="init();">
+    <div id="inner-frame"></div>
+</body>
+</html>

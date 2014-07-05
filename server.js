@@ -34,7 +34,7 @@ exports.main = function(callback) {
         
         var server = app.listen(PORT);
 
-        console.log("open http://localhost:" + PORT + "/");
+        console.log("open http://0.0.0.0:" + PORT + "/");
 
         return callback(null, {
             server: server,
