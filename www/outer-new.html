@@ -166,7 +166,9 @@
             if (/reload=true/.test(window.location.search)) {
                 var session = loadSession();
                 if (session) {
-                    window.initInnerFrame(session.identityLoginURL);
+                    window.initInnerFrame(addQueryParameters(session.identityLoginURL, {
+                        "reload": "true"
+                    }));
                 }
                 storeSession(null);
             }
