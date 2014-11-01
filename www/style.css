@@ -6,12 +6,13 @@ BODY {
 	margin: 0px;
 	overflow: hidden;
     background: none;
+    height: 100%;
 }
-DIV#innerFrame {
+DIV#inner-frame {
 	width: 100%;
 	height: 100%;
 }
-DIV#innerFrame > IFRAME {
+DIV#inner-frame > IFRAME {
 	border: 0px;
 	width: 100%;
 	height: 100%;

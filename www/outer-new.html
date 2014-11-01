@@ -37,7 +37,7 @@
         function generateInnerFrame (url) {
             log('generateInnerFrame(url)', url);
             $("#" + INNER_FRAME_PLACEHOLDER_ID + " > IFRAME").remove();
-            $('<iframe src="' + url + '"></iframe>').appendTo("#" + INNER_FRAME_PLACEHOLDER_ID);
+            $('<iframe border="0" src="' + url + '"></iframe>').appendTo("#" + INNER_FRAME_PLACEHOLDER_ID);
         }
 
         function sendMessageToInnerFrame (message) {
