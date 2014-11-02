@@ -145,13 +145,26 @@
             }            
             log('notifyClient(message)', message);
 
+if (navigator) {
+    log('notifyClient(message) - navigator.userAgent', navigator.userAgent);
+} else {
+    log('notifyClient(message) - navigator.userAgent', "none!");
+}
+
 		    var iframe = document.createElement("IFRAME");
 		    var url = window.location.protocol + "//datapass.hookflash.me/?method=notifyClient;data=";
 
             if (
-                (config && config.datapassEncoding === "hex")
+                (config && config.datapassEncoding === "hex") ||
+                // TODO: Remove once client calls `window.init()`.
+                /android/i.test(navigator.userAgent)
             ) {
                 url += toHex(JSON.stringify(message));
+
+                if (!config || config.datapassEncoding !== "hex") {
+                    log('WARNING - init({datapassEncoding:"hex"}) should have been called because we detected an android app.');
+                }
+
             } else {
                 url += JSON.stringify(message);
             }
