@@ -145,19 +145,11 @@
             }            
             log('notifyClient(message)', message);
 
-if (navigator) {
-    log('notifyClient(message) - navigator.userAgent', navigator.userAgent);
-} else {
-    log('notifyClient(message) - navigator.userAgent', "none!");
-}
-
 		    var iframe = document.createElement("IFRAME");
 		    var url = window.location.protocol + "//datapass.hookflash.me/?method=notifyClient;data=";
 
             if (
-                (config && config.datapassEncoding === "hex") ||
-                // TODO: Remove once client calls `window.init()`.
-                /android/i.test(navigator.userAgent)
+                (config && config.datapassEncoding === "hex")
             ) {
                 url += toHex(JSON.stringify(message));
             } else {
