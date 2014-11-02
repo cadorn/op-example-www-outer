@@ -119,13 +119,43 @@
             return sendMessageToInnerFrame(message);
 		}
 
+        var config = null;
+
+        /*
+        On Android:
+        window.init({
+            datapassEncoding: "hex"
+        });
+        */
+        window.init = function (_config) {
+            config = _config;
+            log('init(_config)', _config);
+        }
+
         /**
          * App Bridge - To send messages to the app
          */
 		function notifyClient (message) {
+            function toHex (str) {
+                var result = '';
+                for (var i=0; i<str.length; i++) {
+                    result += str.charCodeAt(i).toString(16);
+                }
+                return result;
+            }            
             log('notifyClient(message)', message);
+
 		    var iframe = document.createElement("IFRAME");
-		    var url = window.location.protocol + "//datapass.hookflash.me/?method=notifyClient;data=" + JSON.stringify(message);
+		    var url = window.location.protocol + "//datapass.hookflash.me/?method=notifyClient;data=";
+
+            if (
+                (config && config.datapassEncoding === "hex")
+            ) {
+                url += toHex(JSON.stringify(message));
+            } else {
+                url += JSON.stringify(message);
+            }
+
             log('notifyClient(message) - url', url);
 		    iframe.setAttribute("src", url);
 		    document.documentElement.appendChild(iframe);
@@ -160,8 +190,8 @@
          * Init
          */
 
-        window.init = function () {
-            log('##### INIT ##### - init() - window.location', window.location.href);
+        window.onpageinit = function () {
+            log('##### INIT ##### - onpageinit() - window.location', window.location.href);
 
             if (/reload=true/.test(window.location.search)) {
                 var session = loadSession();
@@ -178,7 +208,7 @@
     })(window));
     </script>
 </head>
-<body onload="init();">
+<body onload="onpageinit();">
     <div id="inner-frame"></div>
 </body>
 </html>
