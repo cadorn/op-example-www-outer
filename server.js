@@ -12,6 +12,7 @@ if (FS.existsSync(PATH.join(__dirname, "service.json"))) {
     serviceUid = JSON.parse(FS.readFileSync(PATH.join(__dirname, "service.json"))).uid;
 }
 
+var pioConfig = JSON.parse(FS.readFileSync(PATH.join(__dirname, "../.pio.json")));
 
 exports.main = function(callback) {
     try {
@@ -28,6 +29,29 @@ exports.main = function(callback) {
             app.use(EXPRESS.logger());
             app.use(EXPRESS.bodyParser());
             app.use(EXPRESS.methodOverride());
+        });
+
+        var requestCount = 0;
+
+        app.get("/_internal_status", function(req, res, next) {
+
+            if (!req.headers["x-auth-token"]) {
+                return next();
+            }
+            if (req.headers["x-auth-token"] !== pioConfig.config["pio.service"].config.internalStatusAuthToken) {
+                return next(new Error("'x-auth-token' is invalid"));
+            }
+
+            var payload = {
+                process: {
+                    memoryUsage: process.memoryUsage()
+                },
+                server: {
+                    requestCount: requestCount
+                }
+            };
+
+            return res.end(JSON.stringify(payload, null, 4));
         });
 
         mountStaticDir(app, /^\/(.*)$/, PATH.join(__dirname, "www"));
