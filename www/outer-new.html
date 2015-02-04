@@ -180,6 +180,7 @@ if (navigator) {
          * Inner Frame API - These methods get called by the page loaded in the inner frame.
          */
         window.addEventListener("message", function (event) {
+            if (!/^\{/.test(event.data)) return;
             try {
                 var message = JSON.parse(event.data);
                 log('window.addEventListener("message")', message);
@@ -214,6 +215,20 @@ if (navigator) {
                     }));
                 }
                 storeSession(null);
+            } else {
+                if (
+                    typeof parent === "object" &&
+                    parent !== window &&
+                    typeof parent.postMessage === "function"
+                ) {
+                    parent.postMessage("page.ready:" + (window.name || "unnamed"), "*");
+                } else
+                if (
+                    typeof opener === "object" &&
+                    typeof opener.postMessage === "function"
+                ) {
+                    opener.postMessage("page.ready:" + (window.name || "unnamed"), "*");
+                }
             }
         }
 
