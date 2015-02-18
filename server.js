@@ -54,10 +54,12 @@ exports.main = function(callback) {
             return res.end(JSON.stringify(payload, null, 4));
         });
 
-        app.get(/^\/.+.html$/, function (req, res) {
+        app.get(/^\/(.+\.html)$/, function (req, res, next) {
 
-            var tplPath = PATH.join(__dirname, "www", req.url);
+            var tplPath = PATH.join(__dirname, "www", req.params[0]);
+
             return FS.readFile(tplPath, "utf8", function(err, template) {
+                if (err) return next(err);
 
                 template = template.replace(/\{\{\s*config.HF_LOGGER_HOST\s*\}\}/g, pioConfig.config["pio.service"].config.logger.web.host);
                 template = template.replace(/\{\{\s*config.HF_LOGGER_API_LOGGER\s*\}\}/g, pioConfig.config["pio.service"].config.logger.web.api.logger);
