@@ -54,6 +54,23 @@ exports.main = function(callback) {
             return res.end(JSON.stringify(payload, null, 4));
         });
 
+        app.get(/^\/.+.html$/, function (req, res) {
+
+            var tplPath = PATH.join(__dirname, "www", req.url);
+            return FS.readFile(tplPath, "utf8", function(err, template) {
+
+                template = template.replace(/\{\{\s*config.HF_LOGGER_HOST\s*\}\}/g, pioConfig.config["pio.service"].config.logger.web.host);
+                template = template.replace(/\{\{\s*config.HF_LOGGER_API_LOGGER\s*\}\}/g, pioConfig.config["pio.service"].config.logger.web.api.logger);
+                template = template.replace(/\{\{\s*config.HF_LOGGER_API_RECORD\s*\}\}/g, pioConfig.config["pio.service"].config.logger.web.api.record);
+
+                res.writeHead(200, {
+                    "Content-Type": "text/html",
+                    "Content-Length": template.length
+                });
+                return res.end(template);
+            });
+        });
+
         mountStaticDir(app, /^\/(.*)$/, PATH.join(__dirname, "www"));
         
         var server = app.listen(PORT);
